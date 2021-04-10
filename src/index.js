@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 
@@ -10,10 +10,10 @@ import Navbar from './App/Navbar';
 import 'bootstrap/dist/css/bootstrap.css';
 
 ReactDOM.render(
-  <BrowserRouter>
+  <Router>
     <Navbar />
     <App />
-  </BrowserRouter>,
+  </Router>,
   document.getElementById('root')
 );
 

@@ -1,45 +1,51 @@
-import React from 'react';
-// import styled from 'styled-components';
-import { useDropzone } from 'react-dropzone';
+import React, { useRef } from 'react';
 import { useHistory } from 'react-router';
+// import styled from 'styled-components';
+
+var DragDrop = require('drag-drop');
 
 const Load = (props) => {
-  let { client } = props;
+  const fileInputRef = useRef(null);
   const history = useHistory();
 
-  const {
-    acceptedFiles,
-    fileRejections,
-    getRootProps,
-    getInputProps
-  } = useDropzone({
-    accept: 'video/*',
-    maxFiles: 1,
-    onDrop: (files) => {
-      console.log('file selected', files);
-      client.seed(files[0], (torrent) => {
-        console.log("torrent:", torrent);
-        // history.push('/' + torrent.magnetURI);
-      });
-    }
-  });
+  const onFileInputChange = (event) => {
+    onOpen(event.target.files);
+  };
 
-  // React.useEffect(async () => {
-  //   client.on('torrent', (torrent) => {
-  //     console.log('torrent loaded', torrent); 
-  //   });
-  // }, []);
+  const onFileInputClick = () => {
+    fileInputRef.current.click();
+  }
 
+  const onOpen = (files) => {
+    console.log('files:', files);
+    const opts = {
+      private: true
+    };
+    props.client.seed(files, opts, onSeed);
+  };
+
+  const onSeed = (torrent) => {
+    console.log("seeding torrent:", torrent);
+    torrent.on('error', err => {
+      console.error('[+] torrent error:', err.message);
+    });
+    torrent.on('wire', function (wire, addr) {
+      console.log('connected to peer with address ' + addr);
+    });
+    history.push('/' + encodeURIComponent(torrent.magnetURI));
+  };
+
+  React.useEffect(() => {
+    DragDrop('#dragdrop', onOpen);
+  }, []);
+  
   return (
     <section className="container">
-      <div {...getRootProps({className: 'dropzone'})}>
-        <input {...getInputProps()} />
-        <div className="card">
-          <div className="card-body">
-            <p>Drag 'n' drop some files here, or click to select files</p>
-          </div>
+      <div id="dragdrop" className="card" onClick={ onFileInputClick }>
+        <input type='file' id='file' ref={ fileInputRef } style={{display: 'none'}} onChange={ onFileInputChange }/>
+        <div className="card-body">
+          <p className="user-select-none">Drag 'n' drop some files here, or click to select files</p>
         </div>
-
       </div>
     </section>
   );  
