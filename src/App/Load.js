@@ -18,10 +18,7 @@ const Load = (props) => {
 
   const onOpen = (files) => {
     console.log('files:', files);
-    const opts = {
-      private: true
-    };
-    props.client.seed(files, opts, onSeed);
+    props.client.seed(files, {}, onSeed);
   };
 
   const onSeed = (torrent) => {
@@ -32,7 +29,7 @@ const Load = (props) => {
     torrent.on('wire', function (wire, addr) {
       console.log('connected to peer with address ' + addr);
     });
-    history.push('/' + encodeURIComponent(torrent.magnetURI));
+    history.push('/' + encodeURIComponent(torrent.infoHash));
   };
 
   React.useEffect(() => {

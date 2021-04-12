@@ -20,7 +20,7 @@ const App = () => {
   return (
     <main className="container mt-5">
       <Switch>
-        <Route path="/:magnetURI" children={<Session client={ client } />} />
+        <Route path="/:id" children={<Session client={ client } />} />
         <Route path="/">
           <Load client={ client } />
         </Route>
